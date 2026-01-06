@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MyFit Routine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body { font-family: -apple-system; margin:0; background:#f4f7f6; }
+    header { background:#7FB3A8; color:white; padding:18px; text-align:center; }
+    section { padding:14px; }
+    .card { background:white; border-radius:14px; padding:15px; margin-bottom:12px; }
+    h3 { margin-top:0; }
+    button { background:#FF6F61; color:white; border:none; padding:10px 14px; border-radius:10px; }
+    .check { font-size:17px; }
+    input { padding:8px; width:100%; margin-top:6px; }
+  </style>
+</head>
+
+<body>
+<header>
+  <h2>MyFit Routine</h2>
+  <p>72 kg → 65 kg</p>
+</header>
+
+<section>
+
+<!-- DAILY CHECKLIST -->
+<div class="card">
+<h3>Daily Diet Checklist | रोज़ का डाइट</h3>
+<p class="check">☐ Warm water | गुनगुना पानी</p>
+<p class="check">☐ Breakfast (300 kcal) | नाश्ता</p>
+<p class="check">☐ Fruit | फल</p>
+<p class="check">☐ Lunch (400 kcal) | दोपहर का खाना</p>
+<p class="check">☐ Snack | हल्का नाश्ता</p>
+<p class="check">☐ Dinner (Soup) | रात का खाना</p>
+</div>
+
+<!-- PORTIONS -->
+<div class="card">
+<h3>Portion Guide | मात्रा</h3>
+<p><b>Breakfast:</b> 1 cup poha / 2 chilla / 2 eggs</p>
+<p><b>Lunch:</b> 1 roti OR ½ cup rice + 1 cup dal/chicken</p>
+<p><b>Dinner:</b> 1 bowl soup + ½ cup protein</p>
+</div>
+
+<!-- RECIPES -->
+<div class="card">
+<h3>Weight Loss Recipes | रेसिपी</h3>
+<ul>
+<li>Moong Dal Chilla – 2 (180 kcal)</li>
+<li>Paneer Bhurji – ½ cup (200 kcal)</li>
+<li>Makhana Chaat – 1 cup (150 kcal)</li>
+<li>Light Khichdi – ¾ cup (220 kcal)</li>
+</ul>
+</div>
+
+<!-- SOUPS -->
+<div class="card">
+<h3>Dinner Soups | सूप</h3>
+<ul>
+<li>Clear Veg Soup – 1 bowl</li>
+<li>Tomato Soup – 1 bowl</li>
+<li>Mushroom Soup – 1 bowl</li>
+<li>Palak Soup – 1 bowl</li>
+<li>Carrot-Ginger Soup – 1 bowl</li>
+</ul>
+</div>
+
+<!-- REMINDERS -->
+<div class="card">
+<h3>Daily Reminders</h3>
+<p>💧 Drink water every 45 min</p>
+<p>⏰ 4:30 PM – Craving control</p>
+<p>🌙 9:00 PM – Kitchen closed</p>
+</div>
+
+<!-- WEIGHT TRACKER -->
+<div class="card">
+<h3>Weekly Weight Tracker</h3>
+<input type="number" id="weight" placeholder="Enter weight (kg)">
+<button onclick="addWeight()">Save</button>
+<canvas id="chart" height="200"></canvas>
+</div>
+
+</section>
+
+<script>
+let weights = JSON.parse(localStorage.getItem("weights")) || [];
+
+function addWeight() {
+  let w = document.getElementById("weight").value;
+  if(w){
+    weights.push(w);
+    localStorage.setItem("weights", JSON.stringify(weights));
+    drawChart();
+  }
+}
+
+function drawChart(){
+  new Chart(document.getElementById("chart"), {
+    type: 'line',
+    data: {
+      labels: weights.map((_,i)=>"Week "+(i+1)),
+      datasets: [{
+        label: "Weight (kg)",
+        data: weights,
+        borderColor: "#7FB3A8",
+        fill: false
+      }]
+    }
+  });
+}
+drawChart();
+</script>
+
+</body>
+</html>
