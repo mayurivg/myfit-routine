@@ -7,13 +7,14 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    body { font-family: -apple-system; margin:0; background:#f4f7f6; }
+    body { font-family:-apple-system; margin:0; background:#f4f7f6; }
     header { background:#7FB3A8; color:white; padding:18px; text-align:center; }
     section { padding:14px; }
     .card { background:white; border-radius:14px; padding:15px; margin-bottom:12px; }
     h3 { margin-top:0; }
-    button { background:#FF6F61; color:white; border:none; padding:10px 14px; border-radius:10px; }
-    .check { font-size:17px; }
+    label { display:flex; align-items:center; font-size:17px; margin:8px 0; }
+    input[type=checkbox] { transform:scale(1.3); margin-right:10px; }
+    button { background:#FF6F61; color:white; border:none; padding:10px 14px; border-radius:10px; margin-top:8px; }
     input { padding:8px; width:100%; margin-top:6px; }
   </style>
 </head>
@@ -28,81 +29,73 @@
 
 <!-- DAILY CHECKLIST -->
 <div class="card">
-<h3>Daily Diet Checklist | रोज़ का डाइट</h3>
-<p class="check">☐ Warm water | गुनगुना पानी</p>
-<p class="check">☐ Breakfast (300 kcal) | नाश्ता</p>
-<p class="check">☐ Fruit | फल</p>
-<p class="check">☐ Lunch (400 kcal) | दोपहर का खाना</p>
-<p class="check">☐ Snack | हल्का नाश्ता</p>
-<p class="check">☐ Dinner (Soup) | रात का खाना</p>
+<h3>Daily Diet Checklist</h3>
+
+<label><input type="checkbox" id="water">Warm Water</label>
+<label><input type="checkbox" id="breakfast">Breakfast (300 kcal)</label>
+<label><input type="checkbox" id="fruit">Fruit</label>
+<label><input type="checkbox" id="lunch">Lunch (400 kcal)</label>
+<label><input type="checkbox" id="snack">Evening Snack</label>
+<label><input type="checkbox" id="dinner">Dinner (Soup)</label>
+
+<button onclick="resetDay()">Reset Day</button>
 </div>
 
 <!-- PORTIONS -->
 <div class="card">
-<h3>Portion Guide | मात्रा</h3>
+<h3>Portion Guide</h3>
 <p><b>Breakfast:</b> 1 cup poha / 2 chilla / 2 eggs</p>
 <p><b>Lunch:</b> 1 roti OR ½ cup rice + 1 cup dal/chicken</p>
 <p><b>Dinner:</b> 1 bowl soup + ½ cup protein</p>
-</div>
-
-<!-- RECIPES -->
-<div class="card">
-<h3>Weight Loss Recipes | रेसिपी</h3>
-<ul>
-<li>Moong Dal Chilla – 2 (180 kcal)</li>
-<li>Paneer Bhurji – ½ cup (200 kcal)</li>
-<li>Makhana Chaat – 1 cup (150 kcal)</li>
-<li>Light Khichdi – ¾ cup (220 kcal)</li>
-</ul>
-</div>
-
-<!-- SOUPS -->
-<div class="card">
-<h3>Dinner Soups | सूप</h3>
-<ul>
-<li>Clear Veg Soup – 1 bowl</li>
-<li>Tomato Soup – 1 bowl</li>
-<li>Mushroom Soup – 1 bowl</li>
-<li>Palak Soup – 1 bowl</li>
-<li>Carrot-Ginger Soup – 1 bowl</li>
-</ul>
-</div>
-
-<!-- REMINDERS -->
-<div class="card">
-<h3>Daily Reminders</h3>
-<p>💧 Drink water every 45 min</p>
-<p>⏰ 4:30 PM – Craving control</p>
-<p>🌙 9:00 PM – Kitchen closed</p>
 </div>
 
 <!-- WEIGHT TRACKER -->
 <div class="card">
 <h3>Weekly Weight Tracker</h3>
 <input type="number" id="weight" placeholder="Enter weight (kg)">
-<button onclick="addWeight()">Save</button>
+<button onclick="addWeight()">Save Weight</button>
 <canvas id="chart" height="200"></canvas>
 </div>
 
 </section>
 
 <script>
+/* ---------- CHECKLIST STORAGE ---------- */
+const items = ["water","breakfast","fruit","lunch","snack","dinner"];
+
+items.forEach(id => {
+  const checkbox = document.getElementById(id);
+  checkbox.checked = localStorage.getItem(id) === "true";
+  checkbox.addEventListener("change", () => {
+    localStorage.setItem(id, checkbox.checked);
+  });
+});
+
+function resetDay() {
+  items.forEach(id => {
+    localStorage.removeItem(id);
+    document.getElementById(id).checked = false;
+  });
+}
+
+/* ---------- WEIGHT TRACKER ---------- */
 let weights = JSON.parse(localStorage.getItem("weights")) || [];
 
 function addWeight() {
-  let w = document.getElementById("weight").value;
-  if(w){
+  const w = document.getElementById("weight").value;
+  if (w) {
     weights.push(w);
     localStorage.setItem("weights", JSON.stringify(weights));
+    document.getElementById("weight").value = "";
     drawChart();
   }
 }
 
-function drawChart(){
+function drawChart() {
   new Chart(document.getElementById("chart"), {
     type: 'line',
     data: {
-      labels: weights.map((_,i)=>"Week "+(i+1)),
+      labels: weights.map((_, i) => "Week " + (i + 1)),
       datasets: [{
         label: "Weight (kg)",
         data: weights,
